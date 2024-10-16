@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gospel of Luke Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .question {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            background-color: #ecf0f1;
+        }
+        .choices {
+            margin: 10px 0;
+        }
+        .choice {
+            margin: 5px 0;
+        }
+        #result {
+            display: none;
+            margin-top: 20px;
+        }
+        #retry-btn, #submit-btn {
+            display: none;
+            margin-top: 20px;
+        }
+        #quiz-container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>☦ Gospel of Luke Quiz (NKJV) ☦</h1>
+
+<div>
+    <label for="num-questions">How many questions would you like to answer? (1-∞): </label>
+    <input type="number" id="num-questions" min="1" max="100" value="5">
+    <button id="start-btn">Start Quiz</button>
+</div>
+
+<div id="quiz-container"></div>
+<button id="submit-btn">Submit Answers</button>
+<button id="retry-btn">Retry Quiz</button>
+<div id="result"></div>
+
+<script>
+    const quizData = [
+        // (Original quiz questions)
+        {
+            question: "In the Gospel of Luke, who did the angel Gabriel appear to and announce the birth of John the Baptist?",
+            choices: ["A. Joseph", "B. Zechariah", "C. Simeon", "D. Herod"],
+            answer: "B",
+            verse: "Luke 1:11-13 (NKJV)"
+        },
+        {
+            question: "According to the Gospel of Luke, where was Jesus born?",
+            choices: ["A. Nazareth", "B. Bethlehem", "C. Jerusalem", "D. Capernaum"],
+            answer: "B",
+            verse: "Luke 2:4-7 (NKJV)"
+        },
+        {
+    question: "Who did Jesus raise from the dead in the Gospel of Luke?",
+    choices: ["A. Jairus' daughter", "B. Lazarus", "C. The widow's son at Nain", "D. The centurion's servant"],
+    answer: "C",
+    verse: "Luke 7:11-15 (NKJV)"
+},
+{
+    question: "Which apostle denied Jesus three times?",
+    choices: ["A. John", "B. Peter", "C. Judas", "D. Andrew"],
+    answer: "B",
+    verse: "Luke 22:54-62 (NKJV)"
+},
+{
+    question: "What did Jesus do at the Last Supper in the Gospel of Luke?",
+    choices: ["A. Washed the disciples' feet", "B. Broke bread and gave thanks", "C. Prayed in the garden", "D. Rebuked Judas"],
+    answer: "B",
+    verse: "Luke 22:19-20 (NKJV)"
+},
+{
+    question: "Who did Jesus say was 'the greatest among you'?",
+    choices: ["A. The richest", "B. The one who serves", "C. The one who prays the most", "D. The eldest"],
+    answer: "B",
+    verse: "Luke 22:26 (NKJV)"
+},
+{
+    question: "Who carried the cross for Jesus on the way to His crucifixion?",
+    choices: ["A. Simon of Cyrene", "B. John", "C. Peter", "D. Joseph of Arimathea"],
+    answer: "A",
+    verse: "Luke 23:26 (NKJV)"
+},
+{
+    question: "What were Jesus' final words on the cross in the Gospel of Luke?",
+    choices: ["A. 'It is finished'", "B. 'I thirst'", "C. 'Father, into Your hands I commit My spirit'", "D. 'My God, why have You forsaken Me'"],
+    answer: "C",
+    verse: "Luke 23:46 (NKJV)"
+},
+{
+    question: "Who was the first person to see Jesus after His resurrection according to the Gospel of Luke?",
+    choices: ["A. Peter", "B. Mary Magdalene", "C. The two disciples on the road to Emmaus", "D. Thomas"],
+    answer: "B",
+    verse: "Luke 24:1-10 (NKJV)"
+},
+{
+    question: "What did Jesus say to the repentant thief on the cross?",
+    choices: ["A. 'You will be with me in Paradise'", "B. 'Your sins are forgiven'", "C. 'Go and sin no more'", "D. 'Rise and walk'"],
+    answer: "A",
+    verse: "Luke 23:43 (NKJV)"
+},
+{
+    question: "What did Jesus do immediately after being baptized in the Jordan River?",
+    choices: ["A. He went to the temple", "B. He began preaching", "C. He was led into the wilderness by the Spirit", "D. He gathered His disciples"],
+    answer: "C",
+    verse: "Luke 4:1 (NKJV)"
+},
+{
+    question: "In the Gospel of Luke, what was the first miracle Jesus performed?",
+    choices: ["A. Turning water into wine", "B. Healing a man with an unclean spirit", "C. Healing Simon’s mother-in-law", "D. Feeding the 5,000"],
+    answer: "B",
+    verse: "Luke 4:33-35 (NKJV)"
+},
+        {
+            question: "What was the name of the prophetess who recognized Jesus as the Messiah in the temple?",
+            choices: ["A. Anna", "B. Miriam", "C. Elizabeth", "D. Mary"],
+            answer: "A",
+            verse: "Luke 2:36-38 (NKJV)"
+        },
+        {
+            question: "Who confessed Jesus as 'the Christ of God' in the Gospel of Luke?",
+            choices: ["A. John the Baptist", "B. The Centurion", "C. Peter", "D. The Pharisees"],
+            answer: "C",
+            verse: "Luke 9:20 (NKJV)"
+        },
+        {
+    question: "What was the name of the high priest when John the Baptist began his ministry?",
+    choices: ["A. Caiaphas", "B. Annas", "C. Zechariah", "D. Simeon"],
+    answer: "A",
+    verse: "Luke 3:2 (NKJV)"
+},
+{
+    question: "What did John the Baptist eat in the wilderness?",
+    choices: ["A. Manna", "B. Locusts and wild honey", "C. Bread", "D. Fish and loaves"],
+    answer: "B",
+    verse: "Luke 3:4 (NKJV)"
+},
+{
+    question: "How did John the Baptist refer to the Pharisees and Sadducees who came to him for baptism?",
+    choices: ["A. Serpents", "B. Wolves", "C. Brood of vipers", "D. Lions"],
+    answer: "C",
+    verse: "Luke 3:7 (NKJV)"
+},
+{
+    question: "Which Old Testament prophet did Jesus read from in the synagogue in Nazareth?",
+    choices: ["A. Isaiah", "B. Jeremiah", "C. Daniel", "D. Ezekiel"],
+    answer: "A",
+    verse: "Luke 4:17-19 (NKJV)"
+},
+{
+    question: "How long did Jesus fast in the wilderness?",
+    choices: ["A. 7 days", "B. 30 days", "C. 40 days", "D. 50 days"],
+    answer: "C",
+    verse: "Luke 4:1-2 (NKJV)"
+},
+{
+    question: "Which of the following was NOT one of the temptations Satan presented to Jesus in the wilderness?",
+    choices: ["A. Turning stones into bread", "B. Bowing down to Satan", "C. Jumping from the temple", "D. Raising the dead"],
+    answer: "D",
+    verse: "Luke 4:3-12 (NKJV)"
+},
+{
+    question: "What did Peter do when he saw the miraculous catch of fish?",
+    choices: ["A. Gave thanks", "B. Followed Jesus", "C. Asked for forgiveness", "D. Cried out in fear"],
+    answer: "C",
+    verse: "Luke 5:8-11 (NKJV)"
+},
+{
+    question: "What miracle did Jesus perform in the house of Simon Peter’s mother-in-law?",
+    choices: ["A. Raised the dead", "B. Healed the sick", "C. Turned water into wine", "D. Cured a fever"],
+    answer: "D",
+    verse: "Luke 4:38-39 (NKJV)"
+},
+{
+    question: "What did Jesus do after healing a leper in Luke 5?",
+    choices: ["A. Told him to go to the priest", "B. Told him to tell no one", "C. Went to a secluded place to pray", "D. All of the above"],
+    answer: "D",
+    verse: "Luke 5:12-16 (NKJV)"
+},
+{
+    question: "What was the first thing Jesus forgave the paralytic man for before healing him?",
+    choices: ["A. His lack of faith", "B. His sins", "C. His complaining", "D. His thoughts"],
+    answer: "B",
+    verse: "Luke 5:20 (NKJV)"
+},
+{
+    question: "Which disciple was a tax collector before following Jesus?",
+    choices: ["A. Peter", "B. James", "C. Matthew", "D. Judas"],
+    answer: "C",
+    verse: "Luke 5:27-28 (NKJV)"
+},
+{
+    question: "In the Sermon on the Plain, Jesus said, 'Blessed are you when men hate you' because of what?",
+    choices: ["A. For My name's sake", "B. For your humility", "C. For your faith", "D. For your righteousness"],
+    answer: "A",
+    verse: "Luke 6:22 (NKJV)"
+},
+{
+    question: "Which of these statements did Jesus say about judging others?",
+    choices: ["A. 'Judge not, and you shall not be judged.'", "B. 'You will be judged by how you judge others.'", "C. 'Do not condemn, and you will not be condemned.'", "D. All of the above"],
+    answer: "D",
+    verse: "Luke 6:37 (NKJV)"
+},
+{
+    question: "What happened when Jesus touched the coffin of the widow's dead son in Nain?",
+    choices: ["A. The boy’s spirit returned to him", "B. The crowd fled in fear", "C. The funeral procession stopped", "D. The boy’s mother rejoiced"],
+    answer: "A",
+    verse: "Luke 7:14-15 (NKJV)"
+},
+{
+    question: "What did the woman use to wash Jesus’ feet at the Pharisee's house?",
+    choices: ["A. Water", "B. Her tears", "C. Perfume", "D. Olive oil"],
+    answer: "B",
+    verse: "Luke 7:37-38 (NKJV)"
+},
+{
+    question: "Who provided for Jesus and the disciples from their own resources?",
+    choices: ["A. Mary Magdalene", "B. Joanna", "C. Susanna", "D. All of the above"],
+    answer: "D",
+    verse: "Luke 8:2-3 (NKJV)"
+},
+{
+    question: "What did Jesus say was the reason He spoke in parables?",
+    choices: ["A. So everyone could understand", "B. To fulfill prophecy", "C. To reveal mysteries", "D. So that seeing they may not see and hearing they may not understand"],
+    answer: "D",
+    verse: "Luke 8:10 (NKJV)"
+},
+{
+    question: "What did Jesus do when a storm arose while He was in the boat with His disciples?",
+    choices: ["A. He prayed", "B. He rebuked the wind and the waves", "C. He walked on water", "D. He multiplied bread and fish"],
+    answer: "B",
+    verse: "Luke 8:23-25 (NKJV)"
+},
+{
+    question: "Which demon-possessed man did Jesus heal by sending the demons into a herd of pigs?",
+    choices: ["A. Bartimaeus", "B. Legion", "C. Judas", "D. Jairus"],
+    answer: "B",
+    verse: "Luke 8:30-33 (NKJV)"
+},
+{
+    question: "What did Jesus say to the woman who touched the hem of His garment and was healed?",
+    choices: ["A. 'Your sins are forgiven'", "B. 'Go and sin no more'", "C. 'Be healed'", "D. 'Your faith has made you well'"],
+    answer: "D",
+    verse: "Luke 8:48 (NKJV)"
+},
+{
+    question: "Who was Jairus in the Gospel of Luke?",
+    choices: ["A. A leper", "B. A ruler of the synagogue", "C. A tax collector", "D. A Roman soldier"],
+    answer: "B",
+    verse: "Luke 8:41 (NKJV)"
+},
+{
+    question: "What did the disciples want to do when a Samaritan village did not receive Jesus?",
+    choices: ["A. Pray for them", "B. Leave in peace", "C. Call down fire from heaven", "D. Rebuke them"],
+    answer: "C",
+    verse: "Luke 9:54 (NKJV)"
+},
+{
+    question: "What did Jesus say would happen to those who put their hand to the plow and look back?",
+    choices: ["A. They are fit for the kingdom of God", "B. They are not fit for the kingdom of God", "C. They will receive a great reward", "D. They will be forgiven"],
+    answer: "B",
+    verse: "Luke 9:62 (NKJV)"
+},
+{
+    question: "When Jesus sent out the 70 disciples, what did He say about the harvest?",
+    choices: ["A. 'The harvest is plentiful, but the laborers are few.'", "B. 'The harvest is here, but the workers are many.'", "C. 'The harvest is ready, but the fields are barren.'", "D. 'The laborers are few, and the reward is great.'"],
+    answer: "A",
+    verse: "Luke 10:2 (NKJV)"
+},
+{
+    question: "Who did Jesus say was like 'a certain Samaritan' in the parable of the Good Samaritan?",
+    choices: ["A. A lawyer", "B. A Pharisee", "C. A Levite", "D. A priest"],
+    answer: "A",
+    verse: "Luke 10:25-37 (NKJV)"
+},
+{
+    question: "What did Jesus tell Martha when she complained about Mary not helping her?",
+    choices: ["A. 'Mary has chosen the good part'", "B. 'Help your sister'", "C. 'You are worried and troubled about many things'", "D. Both A and C"],
+    answer: "D",
+    verse: "Luke 10:41-42 (NKJV)"
+},
+{
+    question: "Which prayer did Jesus teach His disciples in Luke 11?",
+    choices: ["A. The Lord’s Prayer", "B. The Prayer of Jabez", "C. The Shema", "D. The Magnificat"],
+    answer: "A",
+    verse: "Luke 11:2-4 (NKJV)"
+},
+{
+    question: "What did Jesus compare to 'a lamp of the body' in Luke 11?",
+    choices: ["A. The heart", "B. The ears", "C. The mouth", "D. The eye"],
+    answer: "D",
+    verse: "Luke 11:34 (NKJV)"
+},
+{
+    question: "What did Jesus warn people to 'beware of' in Luke 12?",
+    choices: ["A. The leaven of the Pharisees", "B. The leaven of Herod", "C. The false prophets", "D. The wolves in sheep’s clothing"],
+    answer: "A",
+    verse: "Luke 12:1 (NKJV)"
+},
+{
+    question: "What did Jesus say about seeking the kingdom of God in Luke 12?",
+    choices: ["A. 'The kingdom is near'", "B. 'All these things shall be added to you'", "C. 'It is for those who are poor in spirit'", "D. 'It is within you'"],
+    answer: "B",
+    verse: "Luke 12:31 (NKJV)"
+},
+{
+    question: "In Luke 12, what does Jesus say about storing up treasures on earth?",
+    choices: ["A. 'You should store them in barns'", "B. 'It is a foolish thing to do'", "C. 'For where your treasure is, there your heart will be also'", "D. 'It is for the wealthy and wise'"],
+    answer: "C",
+    verse: "Luke 12:34 (NKJV)"
+},
+{
+    question: "What did Jesus say about those who 'are ready' when the master comes home from the wedding?",
+    choices: ["A. They will be praised", "B. They will be rewarded", "C. They will be greatly punished", "D. The master will serve them"],
+    answer: "D",
+    verse: "Luke 12:37 (NKJV)"
+},
+{
+    question: "Which fruit tree did Jesus use in a parable to describe unrepentant people?",
+    choices: ["A. Fig tree", "B. Olive tree", "C. Grapevine", "D. Pomegranate tree"],
+    answer: "A",
+    verse: "Luke 13:6-9 (NKJV)"
+},
+{
+    question: "In Luke 14, what did Jesus say you must do to be His disciple?",
+    choices: ["A. Deny yourself", "B. Carry your cross", "C. Hate your family and even your own life", "D. All of the above"],
+    answer: "D",
+    verse: "Luke 14:26-27 (NKJV)"
+},
+{
+    question: "Which of the following parables is NOT found in Luke?",
+    choices: ["A. The Parable of the Lost Sheep", "B. The Parable of the Lost Coin", "C. The Parable of the Good Samaritan", "D. The Parable of the Talents"],
+    answer: "D",
+    verse: "Luke 15 (NKJV)"
+},
+{
+    question: "In Luke 16, Jesus spoke of a rich man and a poor man. What was the poor man's name?",
+    choices: ["A. Lazarus", "B. Zacchaeus", "C. Simon", "D. Bartimaeus"],
+    answer: "A",
+    verse: "Luke 16:20 (NKJV)"
+},
+{
+    question: "What did the rich man in the parable ask Lazarus to do?",
+    choices: ["A. Give him water", "B. Warn his brothers", "C. Carry him to heaven", "D. Both A and B"],
+    answer: "D",
+    verse: "Luke 16:24-28 (NKJV)"
+},
+{
+    question: "What does Jesus say about causing 'one of these little ones to sin'?",
+    choices: ["A. They should be forgiven", "B. It would be better if a millstone were hung around their neck", "C. They will be punished in this life and the next", "D. Their punishment will be light"],
+    answer: "B",
+    verse: "Luke 17:2 (NKJV)"
+},
+{
+    question: "How many lepers did Jesus heal in Luke 17, and how many returned to give thanks?",
+    choices: ["A. 10 healed, 1 returned", "B. 12 healed, 2 returned", "C. 7 healed, 1 returned", "D. 5 healed, 2 returned"],
+    answer: "A",
+    verse: "Luke 17:12-19 (NKJV)"
+},
+{
+    question: "In the parable of the persistent widow, why did the judge grant her justice?",
+    choices: ["A. He was a righteous judge", "B. He feared God", "C. She was a widow", "D. She kept bothering him"],
+    answer: "D",
+    verse: "Luke 18:1-5 (NKJV)"
+},
+{
+    question: "What did the Pharisee say when he prayed in the temple?",
+    choices: ["A. 'Thank God I am not like other men'", "B. 'Forgive me, Lord'", "C. 'I am a sinner'", "D. 'I need Your grace'"],
+    answer: "A",
+    verse: "Luke 18:11 (NKJV)"
+},
+{
+    question: "What did Jesus say about those who humble themselves?",
+    choices: ["A. They will be overlooked", "B. They will be despised", "C. They will be exalted", "D. They will be rewarded with wealth"],
+    answer: "C",
+    verse: "Luke 18:14 (NKJV)"
+},
+{
+    question: "What did Jesus say to the rich ruler who asked what he must do to inherit eternal life?",
+    choices: ["A. 'Sell all that you have and give to the poor'", "B. 'Obey the commandments'", "C. 'Believe in Me'", "D. 'Repent and be baptized'"],
+    answer: "A",
+    verse: "Luke 18:22 (NKJV)"
+},
+{
+    question: "In Luke 19, what did Jesus say He came to seek and to save?",
+    choices: ["A. The rich", "B. The poor", "C. The lost", "D. The righteous"],
+    answer: "C",
+    verse: "Luke 19:10 (NKJV)"
+},
+{
+    question: "What did the people say when Jesus entered Jerusalem?",
+    choices: ["A. 'Crucify Him!'", "B. 'Hosanna! Blessed is He who comes in the name of the Lord!'", "C. 'Hail, King of the Jews!'", "D. 'This man is a prophet.'"],
+    answer: "B",
+    verse: "Luke 19:38 (NKJV)"
+},
+{
+    question: "What did Jesus do when He saw the city of Jerusalem?",
+    choices: ["A. He rejoiced", "B. He wept over it", "C. He cursed it", "D. He blessed it"],
+    answer: "B",
+    verse: "Luke 19:41 (NKJV)"
+},
+{
+    question: "What did Jesus do when He entered the temple after arriving in Jerusalem?",
+    choices: ["A. He preached to the people", "B. He drove out those who bought and sold", "C. He healed the sick", "D. He blessed the children"],
+    answer: "B",
+    verse: "Luke 19:45-46 (NKJV)"
+}
+
+        // Continue adding more questions as needed...
+    ];
+
+    let selectedQuestions = [];
+    let score = 0;
+
+    function startQuiz() {
+        const numQuestions = document.getElementById('num-questions').value;
+        selectedQuestions = quizData.sort(() => 0.5 - Math.random()).slice(0, numQuestions);
+        renderQuiz();
+        document.getElementById('start-btn').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        document.getElementById('submit-btn').style.display = 'block';
+    }
+
+    function renderQuiz() {
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.innerHTML = ''; // Clear previous quiz
+        selectedQuestions.forEach((item, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+            questionDiv.innerHTML = `<p>${index + 1}. ${item.question}</p><p><em>${item.verse}</em></p>`;
+            const choicesDiv = document.createElement('div');
+            choicesDiv.className = 'choices';
+            item.choices.forEach(choice => {
+                choicesDiv.innerHTML += `
+                    <label class="choice">
+                        <input type="radio" name="question${index}" value="${choice.charAt(0)}"> ${choice}
+                    </label>
+                `;
+            });
+            questionDiv.appendChild(choicesDiv);
+            quizContainer.appendChild(questionDiv);
+        });
+    }
+
+    function calculateScore() {
+        selectedQuestions.forEach((item, index) => {
+            const selected = document.querySelector(`input[name="question${index}"]:checked`);
+            if (selected && selected.value.charAt(0) === item.answer) {
+                score++;
+            }
+        });
+    }
+
+    function showResult() {
+        calculateScore();
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = `<h2>Your Score: ${score} out of ${selectedQuestions.length}</h2>`;
+        if (score === selectedQuestions.length) {
+            resultDiv.innerHTML += "<p>☦ Excellent! You know the Gospel of Luke very well.</p>";
+        } else if (score >= selectedQuestions.length * 0.7) {
+            resultDiv.innerHTML += "<p>☦ Good job! You have a good understanding of the Gospel of Luke.</p>";
+        } else {
+            resultDiv.innerHTML += "<p>☦ Keep studying! There's more to learn from the Gospel of Luke.</p>";
+        }
+        resultDiv.style.display = 'block';
+        document.getElementById('retry-btn').style.display = 'block'; // Show retry button
+        document.getElementById('submit-btn').style.display = 'none'; // Hide submit button
+    }
+
+    function resetQuiz() {
+        score = 0;
+        document.getElementById('result').style.display = 'none'; // Hide result
+        document.getElementById('retry-btn').style.display = 'none'; // Hide retry button
+        document.getElementById('submit-btn').style.display = 'block'; // Show submit button
+        document.getElementById('start-btn').style.display = 'block';
+        document.getElementById('quiz-container').style.display = 'none';
+    }
+
+    document.getElementById('start-btn').addEventListener('click', startQuiz);
+    document.getElementById('submit-btn').addEventListener('click', showResult);
+    document.getElementById('retry-btn').addEventListener('click', resetQuiz);
+</script>
+
+</body>
+</html>
